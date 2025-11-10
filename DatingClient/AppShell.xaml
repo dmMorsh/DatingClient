@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="DatingClient.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:views="clr-namespace:DatingClient.Views"
+    xmlns:local="clr-namespace:DatingClient"
+    FlyoutBehavior="Disabled"
+    Title="Scam dating"
+    
+    Shell.NavBarIsVisible="False"
+    >
+    <!-- Shell.TabBarBackgroundColor="{StaticResource TabBarBackgroundColor}" -->
+    <!-- Shell.TabBarForegroundColor="{StaticResource TabBarForegroundColor}" -->
+    <!-- <ShellContent -->
+    <!--     Title="Home" -->
+    <!--     ContentTemplate="{DataTemplate local:MainPage}" -->
+    <!--     Route="MainPage" /> -->
+    <TabBar>
+        <Tab Title="Профиль" Icon="user.png">
+            <ShellContent ContentTemplate="{DataTemplate views:ProfilePage}" />
+        </Tab>
+
+        <Tab Title="Поиск" Icon="search.png">
+            <ShellContent ContentTemplate="{DataTemplate views:SearchPage}" />
+        </Tab>
+
+        <Tab Title="Сердечки" Icon="likes.png">
+            <ShellContent ContentTemplate="{DataTemplate views:LikesPage}" />
+        </Tab>
+
+        <Tab Title="Чат" Icon="chat.png">
+            <ShellContent ContentTemplate="{DataTemplate views:ChatsPage}" />
+        </Tab>
+
+        <Tab Title="Настройки" Icon="settings.png">
+            <ShellContent ContentTemplate="{DataTemplate views:SettingsPage}" />
+        </Tab>
+    </TabBar>
+</Shell>

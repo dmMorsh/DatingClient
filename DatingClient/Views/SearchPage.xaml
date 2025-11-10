@@ -1,0 +1,165 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="DatingClient.Views.SearchPage"
+             xmlns:views="using:DatingClient.Views"
+             xmlns:vm="using:DatingClient.ViewModels">
+    <!-- <ContentPage.BindingContext> -->
+    <!--     <vm:SearchViewModel /> -->
+    <!-- </ContentPage.BindingContext> -->
+    
+    <ContentPage.Content>
+        <Grid>
+            
+            <Grid IsVisible="{Binding IsLoading, 
+                Converter={StaticResource InverseBoolConverter}}">
+                
+                <Grid IsVisible="{Binding CurrentUser, Converter={StaticResource NullableToBoolConverter}}">
+                    <Grid.GestureRecognizers >
+                        <PanGestureRecognizer PanUpdated="OnPanUpdated" />
+                    </Grid.GestureRecognizers>
+
+                    <!-- Карточка -->
+                    <Frame x:Name="CardFrame"
+                           WidthRequest="360"
+                           HeightRequest="480"
+                           CornerRadius="12"
+                           HasShadow="True"
+                           BorderColor="#EEE"
+                           Padding="0" 
+                           BindingContext="{Binding CurrentUser}"
+                           BackgroundColor="White">
+                        <Frame.GestureRecognizers>
+                            <PanGestureRecognizer PanUpdated="OnPanUpdated"/>
+                            <TapGestureRecognizer Tapped="OnCardTapped" />
+                        </Frame.GestureRecognizers>
+                        
+                        <Grid>
+                            <Image Source="{Binding PhotoUrl}" Aspect="AspectFill"/>
+                            <BoxView
+                                VerticalOptions="End"
+                                HeightRequest="60">
+                                <BoxView.Background>
+                                    <LinearGradientBrush EndPoint="0,1">
+                                        <GradientStop Color="#00000000" Offset="0.0" />
+                                        <GradientStop Color="#AA000000" Offset="1.0" />
+                                    </LinearGradientBrush>
+                                </BoxView.Background>
+                            </BoxView>
+                            <StackLayout VerticalOptions="End" Padding="20">
+                                <Label Text="{Binding Name}" FontSize="24" TextColor="White" FontAttributes="Bold"/>
+                                <Label Text="{Binding Age}" FontSize="18" TextColor="White"/>
+                                <Label Text="{Binding DistanceKm, StringFormat='{}{0} км'}" FontSize="18" TextColor="White"/>
+                            </StackLayout>
+                        </Grid>
+                        
+                    </Frame>
+                    
+                    <!-- Кнопки -->
+                    <StackLayout Orientation="Horizontal" 
+                                 HorizontalOptions="Center"
+                                 VerticalOptions="End"
+                                 Spacing="50"
+                                 Margin="0,0,0,20">
+                        <Button BackgroundColor="Transparent" Text="✖️" Clicked="Skip_OnClicked" 
+                                FontSize="24"/>
+                        <Button BackgroundColor="Transparent" Text="❤️" Clicked="Like_OnClicked" 
+                                FontSize="24"/>
+                    </StackLayout>
+                    
+                    <!-- Эффект лайка -->
+                    <Label x:Name="LikeLabel"
+                           Text="LIKE"
+                           FontSize="36"
+                           FontAttributes="Bold"
+                           TextColor="LimeGreen"
+                           Opacity="0"
+                           Rotation="10"
+                           TranslationX="200"
+                           TranslationY="100"/>
+
+                    <!-- Эффект дизлайка -->
+                    <Label x:Name="NopeLabel"
+                           Text="NOPE"
+                           FontSize="36"
+                           FontAttributes="Bold"
+                           TextColor="Tomato"
+                           Opacity="0"
+                           Rotation="-10"
+                           TranslationX="80"
+                           TranslationY="50"/>
+                </Grid>
+                
+                <!-- Заставка Empty -->
+                <Grid IsVisible="{Binding CurrentUser, 
+                    Converter={StaticResource NullableToBoolConverter}, ConverterParameter=reverse}">
+                    
+                    <Frame x:Name="Empty"
+                           WidthRequest="320"
+                           HeightRequest="420"
+                           CornerRadius="20"
+                           HasShadow="True"
+                           Padding="0"
+                           BackgroundColor="White">
+
+                        <Label BackgroundColor="DimGray" 
+                               TextColor="White"
+                               FontSize="32"
+                               FontAttributes="Bold"
+                               HorizontalTextAlignment="Center"
+                               VerticalTextAlignment="Center"
+                               Padding="10"
+                               Margin="10"
+                               >Больше ничего не найдено :(</Label>
+                    </Frame>
+                </Grid>
+                
+            </Grid>
+            
+            <!-- Заставка загрузки -->
+            <views:LoadingOverlay IsLoading="{Binding IsLoading}" />
+            
+            <Grid>
+                <StackLayout Orientation="Horizontal" VerticalOptions="Start" HorizontalOptions="End">
+                    
+                    <Button
+                        WidthRequest="64"
+                        HeightRequest="64"
+                        BackgroundColor="Transparent"
+                        CornerRadius="24"
+                        HorizontalOptions="Start"
+                        VerticalOptions="Start"
+                        Clicked="UndoClicked"
+                        IsVisible="{Binding HasPrevious}">
+
+                        <Button.ImageSource>
+                            <FontImageSource
+                                Glyph="🔙"
+                                Color="Black"
+                                Size="24" />
+                        </Button.ImageSource>
+                    </Button>
+                    
+                    <Button
+                        WidthRequest="64"
+                        HeightRequest="64"
+                        BackgroundColor="Transparent"
+                        CornerRadius="24"
+                        HorizontalOptions="Start"
+                        VerticalOptions="Start"
+                        Clicked="FilterClicked">
+
+                        <Button.ImageSource>
+                            <FontImageSource
+                                Glyph="⚙️"
+                                Color="Black"
+                                Size="24" />
+                        </Button.ImageSource>
+                    </Button>
+                </StackLayout>
+            </Grid>
+            
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>

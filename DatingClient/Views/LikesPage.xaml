@@ -1,0 +1,114 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="DatingClient.Views.LikesPage"
+             xmlns:vm="clr-namespace:DatingClient.ViewModels"
+             xmlns:models="using:DatingClient.Models"
+             xmlns:views="using:DatingClient.Views">
+    <!-- <ContentPage.BindingContext> -->
+    <!--     <vm:LikesViewModel /> -->
+    <!-- </ContentPage.BindingContext> -->
+    
+    <Grid>
+        <!-- RefreshView обеспечивает pull-to-refresh -->
+        <RefreshView Command="{Binding RefreshCommand}"
+                     IsRefreshing="{Binding IsRefreshing}">
+            
+            <Grid>
+                <CollectionView x:Name="LikesCollection" 
+                                ItemsSource="{Binding Likes}">
+                    
+                    <CollectionView.ItemsLayout>
+                        <GridItemsLayout Orientation="Vertical" Span="2"/>
+                    </CollectionView.ItemsLayout>
+                    
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="models:User">
+                            <Frame CornerRadius="18"
+                                   HasShadow="True"
+                                   Padding="0"
+                                   HeightRequest="240"
+                                   Margin="8"
+                                   Loaded="OnCardLoaded">
+
+                                <Grid x:Name="RootGrid">
+                                    <Image Source="{Binding PhotoUrl}"
+                                           Aspect="AspectFill"
+                                           x:Name="AvatarImage" />
+
+                                    <BoxView BackgroundColor="Black" Opacity="0.25" />
+
+                                    <Grid ColumnDefinitions="*,*">
+                                        <StackLayout Grid.Column="0" VerticalOptions="End" Padding="10">
+                                                <Label Text="{Binding Name}"
+                                                       TextColor="White"
+                                                       FontAttributes="Bold"
+                                                       FontSize="18"
+                                                       HorizontalTextAlignment="Center" />
+                                                <Label Text="{Binding Age}"
+                                                       TextColor="White"
+                                                       FontSize="14"
+                                                       HorizontalTextAlignment="Center" />
+                                        </StackLayout>
+                                        <Grid Grid.Column="1" >
+                                            <Button Text="✖️" BackgroundColor="Transparent"
+                                                    VerticalOptions="Start" 
+                                                    Command="{Binding Source={RelativeSource AncestorType={x:Type vm:LikesViewModel}}, Path=DislikeCommand}"
+                                                    CommandParameter="{Binding .}"/>
+                                            <Button Text="❤️" BackgroundColor="Transparent"
+                                                    VerticalOptions="End" 
+                                                    Command="{Binding Source={RelativeSource AncestorType={x:Type vm:LikesViewModel}}, Path=LikeBackCommand}"
+                                                    CommandParameter="{Binding .}"/>
+                                        </Grid>
+                                    </Grid>
+
+                                    <Label x:Name="LikeEffect"
+                                           Text="❤️"
+                                           FontSize="64"
+                                           Opacity="0"
+                                           VerticalOptions="Center"
+                                           HorizontalOptions="Center" />
+
+                                    <Grid.GestureRecognizers>
+                                        <TapGestureRecognizer Tapped="OnCardTapped" />
+                                    </Grid.GestureRecognizers>
+                                </Grid>
+                            </Frame>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+                
+                <Grid IsVisible="{Binding Likes, 
+                    Converter={StaticResource NullableToBoolConverter}, ConverterParameter=reverse}">
+                    
+                    <Frame x:Name="Empty"
+                           WidthRequest="320"
+                           HeightRequest="420"
+                           CornerRadius="20"
+                           HasShadow="True"
+                           Padding="0"
+                           BackgroundColor="White">
+
+                        <Label BackgroundColor="DimGray" 
+                               TextColor="White"
+                               FontSize="32"
+                               FontAttributes="Bold"
+                               HorizontalTextAlignment="Center"
+                               VerticalTextAlignment="Center"
+                               Padding="10"
+                               Margin="10"
+                        >Пока больше ничего нет :(</Label>
+
+                        
+                    </Frame>
+                </Grid>
+            </Grid>
+            
+        </RefreshView>    
+        
+        <!-- Заставка загрузки -->
+        <views:LoadingOverlay IsLoading="{Binding IsLoading}" />
+    </Grid>
+        
+</ContentPage>

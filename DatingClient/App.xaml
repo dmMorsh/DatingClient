@@ -1,0 +1,61 @@
+﻿<?xml version = "1.0" encoding = "UTF-8" ?>
+<Application xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:DatingClient"
+             xmlns:converters="clr-namespace:DatingClient.Converters"
+             x:Class="DatingClient.App">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Resources/Styles/Colors.xaml" />
+                <ResourceDictionary Source="Resources/Styles/Styles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            
+            <!-- Конвертеры -->
+            <converters:InverseBoolConverter x:Key="InverseBoolConverter" />
+            <converters:BoolToColorConverter x:Key="BoolToColorConverter"
+                                             MyMessageColor="#4C6EF5"
+                                             OtherMessageColor="#444" />
+            <converters:BoolToLayoutConverter x:Key="BoolToLayoutConverter" />
+            <converters:NullableToBoolConverter x:Key="NullableToBoolConverter" />
+            
+            <!-- <Color x:Key="PrimaryColor">#4C6EF5</Color> -->
+            <!-- <Color x:Key="SecondaryColor">#F8F9FB</Color> -->
+            
+            <!-- ✅ Стили -->
+            <Style TargetType="ContentPage">
+                <Setter Property="BackgroundColor" Value="{StaticResource Gray200}" />
+                <Setter Property="Background" Value="{StaticResource Gray200}" />
+            </Style>
+
+            <Style TargetType="ContentPresenter">
+                <Setter Property="BackgroundColor" Value="{StaticResource Magenta}" />
+            </Style>
+            
+            <Style TargetType="Button">
+                <Setter Property="BackgroundColor" Value="{StaticResource Primary}" />
+                <Setter Property="TextColor" Value="White" />
+                <Setter Property="CornerRadius" Value="12" />
+                <Setter Property="HeightRequest" Value="48" />
+                <Setter Property="FontSize" Value="16" />
+                <Setter Property="Margin" Value="10,5" />
+                <Setter Property="Shadow">
+                    <Setter.Value>
+                        <Shadow Brush="{StaticResource Primary}" Opacity="0.3" Radius="8" />
+                    </Setter.Value>
+                </Setter>
+            </Style>
+            
+            <DataTemplate x:Key="MessageTemplate">
+                <Frame HasShadow="False"
+                       BackgroundColor="{Binding IsMine, Converter={StaticResource BoolToColorConverter}}"
+                       CornerRadius="15"
+                       Margin="10"
+                       HorizontalOptions="{Binding IsMine, Converter={StaticResource BoolToLayoutConverter}}">
+                    <Label Text="{Binding Content}" TextColor="White" />
+                </Frame>
+            </DataTemplate>
+            
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

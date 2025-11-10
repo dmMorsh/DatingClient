@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:DatingClient.ViewModels"
+             x:Class="DatingClient.Views.SettingsPage">
+    <!-- <ContentPage.BindingContext> -->
+    <!--     <vm:SettingsViewModel /> -->
+    <!-- </ContentPage.BindingContext> -->
+    <ContentPage.Content>
+        <VerticalStackLayout Padding="30" Spacing="15">
+            <Label Text="Подключено" 
+                   IsVisible="{Binding Connected}" 
+                   HorizontalTextAlignment="Center"
+                   BackgroundColor="DimGray"
+                   TextColor="White"
+                   />
+            
+            <Label Text="API Base URL" FontAttributes="Bold" />
+            <Entry Text="{Binding ApiUrlEntry}" Placeholder="http://..." />
+            <Button Text="Сохранить" Command="{Binding CmdOnSaveClicked}" />
+            <Button Text="Выйти" BackgroundColor="#E03131" Command="{Binding CmdOnLogoutClicked}" />
+            <Button Text="Clear my swipes" BackgroundColor="#E03131" Command="{Binding ClearMySwipesCommand}" 
+                    IsVisible="{Binding IsDebug}"/>
+        </VerticalStackLayout>
+    </ContentPage.Content>
+</ContentPage>

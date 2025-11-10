@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:DatingClient.ViewModels"
+             xmlns:views="using:DatingClient.Views"
+             BackgroundColor="White"
+             Shell.NavBarIsVisible="False"
+             Shell.TabBarIsVisible="False"
+             NavigationPage.HasNavigationBar="False"
+             x:Class="DatingClient.Views.LoginPage">
+    <!-- <ContentPage.BindingContext> -->
+    <!--     <vm:LoginViewModel /> -->
+    <!-- </ContentPage.BindingContext> -->
+    
+    <ContentPage.Content>
+        <Grid>
+            <VerticalStackLayout Margin="20, 120">
+                <Entry Text="{Binding UsernameEntry}" Placeholder="Username" />
+                <Entry Text="{Binding PasswordEntry}" Placeholder="Password" IsPassword="True" />
+                <Button Text="Login" Command="{Binding LoginCommand}" />
+                <Button Text="Register" Command="{Binding RegisterCommand}" />
+                <Label x:Name="StatusLabel" TextColor="Red" />
+            </VerticalStackLayout>
+            
+            <!-- Заставка загрузки -->
+            <views:LoadingOverlay IsLoading="{Binding IsLoading}" />
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>

@@ -1,0 +1,95 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<toolkit:Popup xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+               xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+               xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+               xmlns:helpers="clr-namespace:DatingClient.Helpers"
+               xmlns:converters="clr-namespace:DatingClient.Converters"
+               x:Class="DatingClient.Views.FilterPopup"
+               Size="480,640"
+               Closed="FilterPopup_OnClosed">
+    <!-- <toolkit:Popup./> -->
+    <toolkit:Popup.Resources>
+        <converters:GenderToStringConverter x:Key="GenderToStringConverter" />
+    </toolkit:Popup.Resources>
+    
+    <VerticalStackLayout Padding="20" Spacing="10" >
+        <Label Text="Фильтры" FontSize="24" FontAttributes="Bold" HorizontalOptions="Center" />
+
+        <Picker Title="Пол"
+                ItemsSource="{x:Static helpers:GenderValues.All}"
+                SelectedItem="{Binding Filter.Gender}"
+                ItemDisplayBinding="{Binding Converter={StaticResource GenderToStringConverter}, ConverterParameter=accusative}"/>
+
+        <Grid ColumnDefinitions="*,auto"
+              VerticalOptions="Center"
+              Padding="0">
+            <Grid Grid.Column="0"
+                  RowDefinitions="Auto"
+                  VerticalOptions="Center">
+                <Label Text="{Binding LocationPlaceholder}"
+                       IsVisible="{Binding IsLocationAutoFilled}"
+                       VerticalOptions="Center"
+                       VerticalTextAlignment="Center">
+                    <Label.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="TapGestureRecognizer_OnTapped"/>
+                    </Label.GestureRecognizers>
+                </Label>
+
+                <Entry Text="{Binding LocationQuery}"
+                       IsVisible="{Binding IsLocationAutoFilled, Converter={StaticResource InverseBoolConverter}}"
+                       VerticalOptions="Center"
+                       VerticalTextAlignment="Center"
+                       Placeholder="Введите город..."
+                       Unfocused="VisualElement_OnUnfocused"
+                       />
+            </Grid>
+
+            <Button Grid.Column="1"
+                    Text="🧭"
+                    VerticalOptions="Center"  CornerRadius="25"
+                    Margin="8,0,0,0"
+                    Command="{Binding DetectLocationCommand}"
+                    IsEnabled="{Binding IsDetecting, Converter={StaticResource InverseBoolConverter}}"/>
+        </Grid>
+        
+        <CollectionView ItemsSource="{Binding Suggestions}"
+                        SelectionMode="Single"
+                        SelectionChangedCommand="{Binding SelectSuggestionCommand}"
+                        SelectionChangedCommandParameter="{Binding SelectedItem, 
+                            Source={RelativeSource Self}}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Label Text="{Binding DisplayName}"
+                           Padding="10,5"
+                           BackgroundColor="#666"
+                           FontSize="Small"/>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+        
+        <HorizontalStackLayout Spacing="5">
+            <Label Text="Возраст от:" VerticalOptions="Center"/>
+            <Entry Text="{Binding Filter.MinAge}" Keyboard="Numeric" WidthRequest="50"/>
+            <Label Text="до:" VerticalOptions="Center"/>
+            <Entry Text="{Binding Filter.MaxAge}" Keyboard="Numeric" WidthRequest="50"/>
+        </HorizontalStackLayout>
+
+        <HorizontalStackLayout Spacing="5">
+            <Label Text="Макс. расстояние (км):" VerticalOptions="Center"/>
+            <Entry Text="{Binding Filter.MaxDistanceKm}" Keyboard="Numeric" WidthRequest="50"/>
+        </HorizontalStackLayout>
+
+        <HorizontalStackLayout Spacing="10">
+            <Switch IsToggled="{Binding Filter.HasPhoto}"/>
+            <Label Text="Только с фото" VerticalOptions="Center"/>
+        </HorizontalStackLayout>
+
+        <HorizontalStackLayout Spacing="10">
+            <Switch IsToggled="{Binding Filter.OnlineOnly}"/>
+            <Label Text="Только онлайн" VerticalOptions="Center"/>
+        </HorizontalStackLayout>
+        
+        <Button Text="Применить" Clicked="Apply" />
+        <Button Text="Отмена" Clicked="Close" />
+    </VerticalStackLayout>
+</toolkit:Popup>

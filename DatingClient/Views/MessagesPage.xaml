@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="DatingClient.Views.MessagesPage"
+             xmlns:vm="clr-namespace:DatingClient.ViewModels"
+             >
+    <!-- <ContentPage.BindingContext> -->
+    <!--     <vm:ChatViewModel /> -->
+    <!-- </ContentPage.BindingContext> -->
+    
+    <Grid RowDefinitions="*,Auto">
+        <CollectionView Grid.Row="0"
+                        x:Name="MessagesList"
+                        ItemsSource="{Binding Messages}"
+                        Scrolled="OnMessagesScrolled"
+                        ItemTemplate="{StaticResource MessageTemplate}"
+                        VerticalScrollBarVisibility="Never"
+                        SelectionMode="None"
+                        VerticalOptions="FillAndExpand" />
+        <Button x:Name="GoToLastMsgBtn" Text="ߜ" BackgroundColor="DimGrey" CornerRadius="25" Grid.Row="0" 
+                VerticalOptions="End" HorizontalOptions="End" 
+                Clicked="GoToLast" IsVisible="False"/>
+        <Grid Grid.Row="1" ColumnDefinitions="*,Auto" Padding="5">
+            <Grid.BackgroundColor >
+                <x:AppThemeBinding Light="{StaticResource TabBarBackgroundColor}" 
+                                   Dark="{StaticResource TabBarBackgroundColorDark}"/>
+            </Grid.BackgroundColor>
+            <Entry Text="{Binding NewMessage}" Placeholder="Type a message..." />
+            <Button Text="📨" FontSize="24" Grid.Column="1" Command="{Binding SendMessageCommand}" />
+        </Grid>
+    </Grid>
+    
+</ContentPage>

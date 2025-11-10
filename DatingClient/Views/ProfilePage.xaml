@@ -1,0 +1,107 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:DatingClient.ViewModels"
+             xmlns:helpers="clr-namespace:DatingClient.Helpers"
+             xmlns:converters="clr-namespace:DatingClient.Converters"
+             x:Class="DatingClient.Views.ProfilePage"
+             Title="Мой профиль">
+
+    <!-- <ContentPage.BindingContext> -->
+    <!--     <vm:ProfileViewModel /> -->
+    <!-- </ContentPage.BindingContext> -->
+
+    <ContentPage.Resources>
+        <converters:GenderToStringConverter x:Key="GenderToStringConverter" />
+    </ContentPage.Resources>
+    <Grid>
+        <ScrollView>
+            <VerticalStackLayout Padding="20" Spacing="16">
+                <!-- Поля -->
+                <Frame WidthRequest="250"
+                       HeightRequest="250"
+                       CornerRadius="125"
+                       Padding="0"
+                       HasShadow="False"
+                       BorderColor="#DDD"
+                       VerticalOptions="Center">
+                    <Image Source="{Binding User.LocalPhotoUrl}"
+                           Aspect="AspectFill"
+                           WidthRequest="250"
+                           HeightRequest="250" />
+                </Frame>
+
+                <Entry Text="{Binding User.Name}" Placeholder="Имя" IsEnabled="{Binding IsEditing}" />
+                <Picker Title="Пол"
+                        ItemsSource="{x:Static helpers:GenderValues.All}"
+                        SelectedItem="{Binding User.Gender}"
+                        ItemDisplayBinding="{Binding Converter={StaticResource GenderToStringConverter}}"
+                        IsEnabled="{Binding IsEditing}" />
+                <Entry Text="{Binding User.Age}" Placeholder="Возраст" Keyboard="Numeric" MaxLength="2"
+                       IsEnabled="False" />
+                <DatePicker Date="{Binding User.Birthday}" IsEnabled="{Binding IsEditing}" />
+
+                <Editor Text="{Binding User.Bio}" Placeholder="О себе" AutoSize="TextChanges"
+                        IsEnabled="{Binding IsEditing}" />
+                <Picker Title="Я ищу"
+                        ItemsSource="{x:Static helpers:GenderValues.All}"
+                        SelectedItem="{Binding User.InterestedIn}"
+                        ItemDisplayBinding="{Binding Converter={StaticResource GenderToStringConverter}, ConverterParameter=accusative}"
+                        IsEnabled="{Binding IsEditing}" />
+
+
+                <Label Text="Местоположение" FontAttributes="Bold" />
+                
+                <Grid ColumnDefinitions="*,auto"
+                      VerticalOptions="Center"
+                      Padding="0">
+                    
+                    <Entry Text="{Binding User.Location}" Placeholder="Введите город вручную"
+                           IsEnabled="False" />
+                    <Button Text="🧭" Grid.Column="1" CornerRadius="25"
+                            Command="{Binding DetectLocationCommand}"
+                            IsEnabled="{Binding IsDetecting, Converter={StaticResource InverseBoolConverter}}"
+                            IsVisible="{Binding IsEditing}" />
+                    
+                </Grid>
+                
+                <Entry Text="{Binding LocationQuery}" Placeholder="Введите город..."
+                       IsVisible="{Binding IsEditing}" />
+                
+                <CollectionView ItemsSource="{Binding Suggestions}"
+                                SelectionMode="Single"
+                                SelectionChangedCommand="{Binding SelectSuggestionCommand}"
+                                SelectionChangedCommandParameter="{Binding SelectedItem, 
+                                    Source={RelativeSource Self}}"
+                                IsVisible="{Binding IsEditing}">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Label Text="{Binding DisplayName}"
+                                   Padding="10,5"
+                                   BackgroundColor="#666"
+                                   FontSize="Small" />
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
+                <ActivityIndicator IsRunning="{Binding IsDetecting}" IsVisible="{Binding IsDetecting}" />
+
+                <!-- Сохранить -->
+                <Button Text="Сохранить"
+                        Command="{Binding SaveProfileCommand}"
+                        IsVisible="{Binding IsEditing}" />
+
+                <Label Text="{Binding StatusMessage}" TextColor="Gray" FontSize="12" />
+
+            </VerticalStackLayout>
+
+        </ScrollView>
+
+        <!-- Редактировать -->
+        <Grid VerticalOptions="Start" ColumnDefinitions="*,*,*,*">
+            <Button Text="⚙️" FontSize="24" BackgroundColor="Transparent" Grid.Column="3"
+                    Command="{Binding EditProfileCommand}" />
+        </Grid>
+    </Grid>
+</ContentPage>

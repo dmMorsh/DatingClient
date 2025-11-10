@@ -1,0 +1,42 @@
+﻿<toolkit:Popup
+    x:Class="DatingClient.Views.ProfilePopup"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    xmlns:converters="using:DatingClient.Converters"
+    CanBeDismissedByTappingOutsideOfPopup="True"
+    Color="Transparent">
+    
+    <toolkit:Popup.Resources>
+        <converters:NullableToBoolConverter x:Key="NullableToBoolConverter" />
+    </toolkit:Popup.Resources>
+    
+    <Frame 
+        BackgroundColor="White"
+        CornerRadius="20"
+        Padding="20"
+        WidthRequest="360" 
+        HeightRequest="560"
+        VerticalOptions="Center"
+        HorizontalOptions="Center">
+
+        <VerticalStackLayout Spacing="10">
+            <HorizontalStackLayout Spacing="180" HorizontalOptions="Center">
+                <Button Text="✖️" BackgroundColor="Transparent"
+                        IsVisible="{Binding SkipCommand, Converter={StaticResource NullableToBoolConverter}}" 
+                        Command="{Binding SkipCommand}" 
+                        CommandParameter="{Binding User}" />
+
+                <Button Text="❤️" BackgroundColor="Transparent"
+                        IsVisible="{Binding LikeCommand, Converter={StaticResource NullableToBoolConverter}}" 
+                        Command="{Binding LikeCommand}" 
+                        CommandParameter="{Binding User}" />
+            </HorizontalStackLayout><Image Source="{Binding User.PhotoUrl}" Aspect="AspectFill" HeightRequest="180" />
+            
+            <Label Text="{Binding User.Name}" FontSize="22" FontAttributes="Bold" HorizontalOptions="Center" />
+            <Label Text="{Binding User.Age}" FontSize="18" HorizontalOptions="Center" />
+            <Label Text="{Binding User.Bio}" FontSize="16" TextColor="Gray" />
+            
+        </VerticalStackLayout>
+    </Frame>
+</toolkit:Popup>

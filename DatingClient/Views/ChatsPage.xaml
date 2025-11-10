@@ -1,0 +1,82 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:DatingClient.ViewModels"
+             xmlns:views="using:DatingClient.Views"
+             x:Class="DatingClient.Views.ChatsPage">
+    <!-- <ContentPage.BindingContext> -->
+    <!--     <vm:ChatsViewModel /> -->
+    <!-- </ContentPage.BindingContext> -->
+    <Grid>
+        <RefreshView Command="{Binding RefreshCommand}"
+                     IsRefreshing="{Binding IsRefreshing}">
+            <CollectionView ItemsSource="{Binding Chats}"
+                        SelectionMode="None">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Padding="10"
+                              ColumnDefinitions="60,*,Auto"
+                              RowDefinitions="Auto,Auto">
+
+                            <!-- КРУГЛЫЙ АВАТАР -->
+                            <Frame WidthRequest="50"
+                                   HeightRequest="50"
+                                   CornerRadius="25"
+                                   Padding="0"
+                                   HasShadow="False"
+                                   BorderColor="#DDD"
+                                   VerticalOptions="Center">
+                                <Image Source="{Binding AvatarUrl}"
+                                       Aspect="AspectFill"
+                                       WidthRequest="50"
+                                       HeightRequest="50" />
+                            </Frame>
+
+                            <!-- ИМЯ И ПОСЛЕДНЕЕ СООБЩЕНИЕ -->
+                            <VerticalStackLayout Grid.Column="1"
+                                                 Padding="10,0"
+                                                 VerticalOptions="Center">
+                                <Label Text="{Binding Title}"
+                                       FontAttributes="Bold"
+                                       FontSize="16"
+                                       TextColor="Black" />
+                                <Label Text="{Binding LastMessage}"
+                                       FontSize="13"
+                                       TextColor="Gray"
+                                       LineBreakMode="TailTruncation" />
+                            </VerticalStackLayout>
+
+                            <!-- ВРЕМЯ + КРАСНАЯ ТОЧКА -->
+                            <Grid Grid.Column="2"
+                                  VerticalOptions="Center"
+                                  HorizontalOptions="End">
+                                <Label Text="{Binding LastMessageTime, StringFormat='{0:t}'}"
+                                       FontSize="12"
+                                       TextColor="Gray"
+                                       VerticalOptions="Center" />
+
+                                <Ellipse WidthRequest="10"
+                                         HeightRequest="10"
+                                         Fill="Red"
+                                         HorizontalOptions="End"
+                                         VerticalOptions="Start"
+                                         IsVisible="{Binding IsRead , Converter={StaticResource InverseBoolConverter}}" />
+                            </Grid>
+
+                            <!-- НЕВИДИМАЯ КНОПКА -->
+                            <Button Grid.ColumnSpan="3"
+                                    BackgroundColor="Transparent"
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ChatsViewModel}}, Path=OpenChatCommand}"
+                                    CommandParameter="{Binding .}" />
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </RefreshView>
+        
+        <!-- Заставка загрузки -->
+        <views:LoadingOverlay IsLoading="{Binding IsLoading}" />
+    </Grid>
+
+</ContentPage>
