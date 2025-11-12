@@ -64,6 +64,7 @@ public class SocketService
                 await Shell.Current.DisplayAlert("Error", $"Couldn't read ws message - {json}", "OK");
             }
         }
+        await Shell.Current.DisplayAlert("Error", $"Подключение разорвано", "OK");
     }
 
     public event Action<WSMessage>? OnMessageReceived;

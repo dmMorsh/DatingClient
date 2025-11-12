@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Specialized;
+using DatingClient.Models;
 using DatingClient.ViewModels;
 
 namespace DatingClient.Views;
@@ -15,6 +16,9 @@ public partial class MessagesPage : ContentPage
         InitializeComponent();
         BindingContext = vm;
         (vm.Messages ??= []).CollectionChanged += Messages_CollectionChanged;
+        // снимаем подавление через короткую задержку, когда UI отрисуется
+        _ = Task.Delay(_initialSuppressDuration).ContinueWith(_ => _suppressInitialMark = false, TaskScheduler.FromCurrentSynchronizationContext());
+
     }
     
     protected override void OnAppearing()
@@ -64,20 +68,13 @@ public partial class MessagesPage : ContentPage
             {
                 // получим текущий первый видимый индекс и элемент
                 int firstIndex = Math.Max(e.FirstVisibleItemIndex, 0);
-
-                // object? firstItem = null;
-                // if (MessagesList.ItemsSource is IList list && list.Count > firstIndex)
-                //     firstItem = list[firstIndex];
-
                 // вызываем загрузку старых сообщений в VM и ожидаем
                 if (BindingContext is MessagesViewModel vm)
                 {
-                
                     // блокируем ввод на время вставки/скролла
                     MessagesList.InputTransparent = true;
-
-                    int inserted = vm.SyncOldestWithUi();
                     
+                    int inserted = vm.SyncOldestWithUi();
                     if (inserted > 0)
                     {
                         // прокручиваем к тому же элементу — индекс сместился на inserted
@@ -98,23 +95,11 @@ public partial class MessagesPage : ContentPage
 
                     vm.LoadOlderMessagesCommand.Execute(null);
                 } 
-
-                // // после вставки — пролистаем к тому же элементу чтобы избежать скачка
-                // if (firstItem is not null)
-                // {
-                //     // небольшой delay — даём CollectionView применить вставки
-                //     await Task.Delay(50);
-                //     MessagesList.ScrollTo(firstItem, position: ScrollToPosition.Start, animate: false);
-                // }
             }
             finally
             {
                 _isLoadingMore = false;
             }
-        
-            // // Загрузить предыдущие сообщения
-            // if (BindingContext is MessagesViewModel vm)
-            //     vm.LoadOlderMessagesCommand.Execute(null);
         }
         else if (!_lastMsgReached && e.VerticalDelta > 0 
                  && MessagesList.ItemsSource is IList list && list.Count-1 <= e.LastVisibleItemIndex)
@@ -155,6 +140,66 @@ public partial class MessagesPage : ContentPage
                 }
             }
         }
+        
+        // --- New: mark visible messages as read ---
+        if (BindingContext is MessagesViewModel vmRead && MessagesList.ItemsSource is IList messagesList)
+        {
+            // если подавление включено и событие не инициировано пользователем (VerticalDelta == 0), то пропускаем
+            if (_suppressInitialMark)
+            {
+                // но если весь список очень короткий — пометим последние (защита: пользователь явно видит последние)
+                // можно раскомментировать следующий блок, если нужно помечать короткие чаты сразу:
+                // if (messagesList.Count <= MaxMarkAtOnce) { ... пометка последних ... }
+            }
+            else
+            {
+                int firstVisible = Math.Max(e.FirstVisibleItemIndex, 0);
+                int lastVisible = Math.Min(e.LastVisibleItemIndex, messagesList.Count - 1);
+
+                // защита: если индексы выглядят нефокусно (диапазон слишком большой), ограничим
+                int visibleCount = lastVisible - firstVisible + 1;
+                if (visibleCount <= 0 || visibleCount > 100) // 100 — защита от мусора в событиях
+                {
+                    // вместо использования диапазона попробуем пометить последние N элементов,
+                    // если событие пришло с нулевым VerticalDelta (открытие) — не делать.
+                    if (e.VerticalDelta != 0)
+                    {
+                        // помечаем последние MaxMarkAtOnce элементов
+                        int start = Math.Max(0, messagesList.Count - MaxMarkAtOnce);
+                        for (int i = start; i < messagesList.Count; i++)
+                        {
+                            if (messagesList[i] is Message msg && !msg.IsMine && !msg.IsRead)
+                            {
+                                msg.IsRead = true;
+                                _readBuffer.Add(msg.Id);
+                            }
+                        }
+                        ScheduleFlush();
+                    }
+                    // иначе молча выходим
+                }
+                else
+                {
+                    // ограничим количество помечаемых, чтобы не добавить слишком много сразу
+                    int toMark = Math.Min(visibleCount, MaxMarkAtOnce);
+                    int markStart = firstVisible;
+
+                    // если visibleCount > MaxMarkAtOnce, центрируем пометку в конце (обычно видим последние)
+                    if (visibleCount > MaxMarkAtOnce)
+                        markStart = lastVisible - toMark + 1;
+
+                    for (int i = markStart; i <= lastVisible && i < messagesList.Count; i++)
+                    {
+                        if (messagesList[i] is Message msg && !msg.IsMine && !msg.IsRead)
+                        {
+                            msg.IsRead = true; // сразу визуально
+                            _readBuffer.Add(msg.Id); // на сервер отложенно
+                        }
+                    }
+                    ScheduleFlush();
+                }
+            }
+        }
     }
 
     private void GoToLast(object? sender, EventArgs e)
@@ -168,5 +213,43 @@ public partial class MessagesPage : ContentPage
         {
             return;
         }
+    }
+    
+    // буфер ID прочитанных сообщений
+    private readonly HashSet<long> _readBuffer = new();
+    private readonly TimeSpan _flushInterval = TimeSpan.FromSeconds(1);
+    private bool _flushScheduled = false;
+    
+    private bool _suppressInitialMark = true;
+    private readonly TimeSpan _initialSuppressDuration = TimeSpan.FromMilliseconds(1500);
+    private const int MaxMarkAtOnce = 12; // максимально помечаем за раз
+
+    private async void FlushReadBufferAsync()
+    {
+        if (_readBuffer.Count == 0) return;
+
+        if (BindingContext is MessagesViewModel vm)
+        {
+            var ids = _readBuffer.ToArray();
+            _readBuffer.Clear();
+            try
+            {
+                await vm.MarkMessagesAsReadAsync(ids);
+            }
+            catch (Exception ex)
+            {
+                // логируем, но не мешаем UI
+                Console.WriteLine($"Failed to mark messages read: {ex}");
+            }
+        }
+        _flushScheduled = false;
+    }
+
+    private void ScheduleFlush()
+    {
+        if (_flushScheduled) return;
+        _flushScheduled = true;
+
+        _ = Task.Delay(_flushInterval).ContinueWith(_ => FlushReadBufferAsync());
     }
 }

@@ -1,8 +1,9 @@
 ﻿using System.Text.Json.Serialization;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace DatingClient.Models;
 
-public class Message
+public class Message : ObservableObject
 {
     [JsonIgnore]
     public string Sender { get; set; }
@@ -25,8 +26,14 @@ public class Message
     [JsonPropertyName("content")]
     public string Content { get; set; }
     
+    private bool _isRead;
+
     [JsonPropertyName("is_read")]
-    public bool IsRead { get; set; }
+    public bool IsRead
+    {
+        get => _isRead;
+        set => SetProperty(ref _isRead, value);
+    }
     
     [JsonPropertyName("created_at")]
     public DateTime? CreatedAt { get; set; }

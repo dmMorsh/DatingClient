@@ -202,61 +202,26 @@ public class ApiService
         return await GetAsync<List<User>?>("/followers");
     }
 
-    public async Task MarkChatMessagesReadAsync(long chatId)
+    public async Task MarkChatMessagesReadAsync(long chat_id, long receiver_id)
     {
-        await PostAsync<bool>($"/chat/read/{chatId}", null);
+        await PostAsync<bool>($"/chat/read", new { chat_id, receiver_id });
     }
     
-    // not using yet
-    public async Task MarkMessagesReadAsync(long[] msgIds)
+    public async Task MarkMessagesReadAsync(long[] message_ids, long chat_id, long receiver_id)
     {
-        await PostAsync<bool>("/messages/read", msgIds);
+        await PostAsync<bool>("/messages/read", new { message_ids, chat_id, receiver_id });
     }
 
     public async Task<List<User>?> GetSwipeCandidatesAsync(SearchFilter filter, long? lastSeenId, int pageSize)
     {
         var query = QueryHelper.ToQueryDictionary(filter);
         
-        query["last_seen_id"] = lastSeenId?.ToString();///ЧТО ТУТ БУДЕТ?
+        query["last_seen_id"] = lastSeenId?.ToString();
         query["page_size"] = pageSize.ToString();
 
         var url = await QueryHelper.BuildQueryStringAsync(query);
         return await GetAsync<List<User>?>($"/profiles/search?{url}");
     }
-    
-    
-    // public async Task<List<User>?> __GetSwipeCandidatesAsync(SearchFilter filter, long? lastSeenId, int pageSize)
-    // {
-    //     var query = new Dictionary<string, string?>
-    //     {
-    //         ["gender"] = filter.Gender.ToString(),
-    //         ["min_age"] = filter.MinAge.ToString(),
-    //         ["max_age"] = filter.MaxAge.ToString(),
-    //         ["max_distance_km"] = filter.MaxDistanceKm.ToString(),
-    //         ["has_photo"] = filter.HasPhoto.ToString(),
-    //         ["interested_in"] = filter.InterestedIn.ToString(),
-    //         ["last_seen_id"] = lastSeenId?.ToString(),
-    //         ["page_size"] = pageSize.ToString()
-    //     };
-    //
-    //     var url = await BuildQueryStringAsync(query);
-    //     return await GetAsync<List<User>?>($"/profiles/search?{url}");
-    // }
-    //
-    // private async Task<string> BuildQueryStringAsync(Dictionary<string, string?> query)
-    // {
-    //     // Убираем null значения
-    //     var filtered = query
-    //         .Where(kv => !string.IsNullOrEmpty(kv.Value))
-    //         .ToDictionary(kv => kv.Key, kv => kv.Value!);
-    //
-    //     if (!filtered.Any()) return string.Empty;
-    //
-    //     var content = new FormUrlEncodedContent(filtered);
-    //     var qs = await content.ReadAsStringAsync(); // возвращает "a=1&b=2"
-    //     return qs;
-    // }
-
     
     // Only for testing purposes
     public async Task ClearMySwipes()

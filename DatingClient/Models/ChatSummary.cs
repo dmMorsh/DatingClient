@@ -65,12 +65,6 @@ public class ChatSummary : INotifyPropertyChanged
         set => SetField(ref _avatarUrl, value);
     }
     
-    // [JsonIgnore]
-    // public bool Unreaded {
-    //     get => _unreaded;
-    //     set => SetField(ref _unreaded, value);
-    // }
-    
     [JsonPropertyName("is_read")]
     public bool? IsRead {
         get => _isRead ?? false;

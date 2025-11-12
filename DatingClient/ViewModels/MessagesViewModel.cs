@@ -16,8 +16,8 @@ public partial class MessagesViewModel : ObservableObject, IQueryAttributable
     private readonly ApiService _api;
     private readonly SocketService _socketService;
     
-    [ObservableProperty] private int _chatId;
-    [ObservableProperty] private int _receiverId;
+    [ObservableProperty] private long _chatId;
+    [ObservableProperty] private long _receiverId;
     
     [ObservableProperty] private ObservableCollection<Message> _messages = [];
     [ObservableProperty] private string _newMessage = string.Empty;
@@ -71,7 +71,7 @@ public partial class MessagesViewModel : ObservableObject, IQueryAttributable
             _oldestMessageId = all.FirstOrDefault()?.Id;
             _newestMessageId = all.LastOrDefault()?.Id;
             
-            await _api.MarkChatMessagesReadAsync(ChatId);
+            // await _api.MarkChatMessagesReadAsync(ChatId, ReceiverId);
         }
         catch (Exception e)
         {
@@ -246,6 +246,11 @@ public partial class MessagesViewModel : ObservableObject, IQueryAttributable
         };
         _newestMessageId = msg.Id;
         Messages.Add(msg);
+    }
+
+    public async Task MarkMessagesAsReadAsync(long[] msgIds)
+    {
+        await _api.MarkMessagesReadAsync(msgIds, ChatId, ReceiverId);
     }
 }
 
