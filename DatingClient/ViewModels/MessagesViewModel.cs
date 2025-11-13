@@ -70,8 +70,6 @@ public partial class MessagesViewModel : ObservableObject, IQueryAttributable
             
             _oldestMessageId = all.FirstOrDefault()?.Id;
             _newestMessageId = all.LastOrDefault()?.Id;
-            
-            // await _api.MarkChatMessagesReadAsync(ChatId, ReceiverId);
         }
         catch (Exception e)
         {

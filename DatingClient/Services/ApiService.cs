@@ -100,7 +100,7 @@ public class ApiService
         var response = await _http.PostAsJsonAsync($"{BaseUrl}/refresh",
             new { user_id = UserId, refresh_token = RefreshToken });
 
-        //TODO fix out
+        //TODO fix out (auto login / logout ?)
         if (response.StatusCode == HttpStatusCode.Unauthorized)
             await Shell.Current.DisplayAlert("Error", "Failed to refresh, login again please", "Ok");
 

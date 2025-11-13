@@ -143,13 +143,7 @@ public partial class MessagesPage : ContentPage
         if (BindingContext is MessagesViewModel vmRead && MessagesList.ItemsSource is IList messagesList)
         {
             // if initial suppress is active, skip marking
-            if (_suppressInitialMark)
-            {
-                // но если весь список очень короткий — пометим последние (защита: пользователь явно видит последние)
-                // можно раскомментировать следующий блок, если нужно помечать короткие чаты сразу:
-                // if (messagesList.Count <= MaxMarkAtOnce) { ... пометка последних ... }
-            }
-            else
+            if (!_suppressInitialMark)
             {
                 int firstVisible = Math.Max(e.FirstVisibleItemIndex, 0);
                 int lastVisible = Math.Min(e.LastVisibleItemIndex, messagesList.Count - 1);
@@ -200,15 +194,15 @@ public partial class MessagesPage : ContentPage
             if(MessagesList.ItemsSource is IList list)
                 MessagesList.ScrollTo(list[list.Count-1], position: ScrollToPosition.End, animate: true);
         }
-        catch (Exception exception)
+        catch
         {
-            return;
+            // ignored
         }
     }
     
-    private readonly HashSet<long> _readBuffer = new();
+    private readonly HashSet<long> _readBuffer = [];
     private readonly TimeSpan _flushInterval = TimeSpan.FromSeconds(1);
-    private bool _flushScheduled = false;
+    private bool _flushScheduled;
     
     private bool _suppressInitialMark = true;
     private readonly TimeSpan _initialSuppressDuration = TimeSpan.FromMilliseconds(1500);
