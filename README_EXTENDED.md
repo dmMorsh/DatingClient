@@ -618,14 +618,6 @@ dotnet publish -f net8.0-ios -c Release
 
 **Выходной файл:** `.ipa` пакет
 
-### Для Windows
-
-```bash
-dotnet publish -f net8.0-windows10.0.19041.0 -c Release
-```
-
-**Выходной файл:** `.exe` приложение
-
 ---
 
 ## 🐛 Решение проблем
@@ -657,7 +649,7 @@ public async Task TestConnectionAsync()
 - Проверить IP и порт в Constants.cs
 - Убедиться, что сервер запущен
 - Проверить, что устройство в той же сети
-- Для Android: добавить `INTERNET` разрешение в AndroidManifest.xml
+- Для Android: добавить `android:usesCleartextTraffic="true"` в AndroidManifest.xml
 
 ### "WebSocket connection failed"
 
