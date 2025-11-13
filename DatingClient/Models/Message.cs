@@ -9,7 +9,7 @@ public class Message : ObservableObject
     public string Sender { get; set; }
     
     [JsonIgnore]
-    public bool IsMine { get; set; } // для отображения справа/слева
+    public bool IsMine { get; set; }
     
     [JsonPropertyName("id")]
     public long Id { get; set; }
