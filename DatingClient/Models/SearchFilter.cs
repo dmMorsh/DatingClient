@@ -6,45 +6,45 @@ namespace DatingClient.Models;
 
 public partial class SearchFilter : ObservableObject
 {
-    [JsonConverter(typeof(GenderJsonConverter))]
-    [JsonPropertyName("gender")]
+    [property: JsonConverter(typeof(GenderJsonConverter))]
+    [property: JsonPropertyName("gender")]
     [ObservableProperty]
     private Gender? _gender;
 
-    [JsonPropertyName("min_age")]
+    [property: JsonPropertyName("min_age")]
     [ObservableProperty]
     private int? _minAge;
 
-    [JsonPropertyName("max_age")]
+    [property: JsonPropertyName("max_age")]
     [ObservableProperty]
     private int? _maxAge;
 
-    [JsonPropertyName("max_distance_km")]
+    [property: JsonPropertyName("max_distance_km")]
     [ObservableProperty]
     private double? _maxDistanceKm;
     
-    [JsonPropertyName("latitude")]
+    [property: JsonPropertyName("latitude")]
     [ObservableProperty]
     private double? _latitude;
     
-    [JsonPropertyName("longitude")]
+    [property: JsonPropertyName("longitude")]
     [ObservableProperty]
     private double? _longitude;
 
-    [JsonPropertyName("has_photo")]
+    [property: JsonPropertyName("has_photo")]
     [ObservableProperty]
     private bool? _hasPhoto;
 
-    [JsonConverter(typeof(GenderJsonConverter))]
-    [JsonPropertyName("interested_in")]
+    [property: JsonConverter(typeof(GenderJsonConverter))]
+    [property: JsonPropertyName("interested_in")]
     [ObservableProperty]
     private Gender? _interestedIn;
     
-    [JsonPropertyName("online_only")]
+    [property: JsonPropertyName("online_only")]
     [ObservableProperty]
     private bool? _onlineOnly;
 
-    [JsonIgnore]
+    [property: JsonIgnore]
     [ObservableProperty] 
     private string? _location;
 }

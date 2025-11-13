@@ -1,87 +1,43 @@
-﻿using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace DatingClient.Models;
 
-public class ChatSummary : INotifyPropertyChanged
+public partial class ChatSummary : ObservableObject
 {
+    [property: JsonPropertyName("id")]
+    [ObservableProperty]
     private long _id;
+    
+    [property: JsonPropertyName("last_message")]
+    [ObservableProperty]
     private string _lastMessage = string.Empty;
+    
+    [property: JsonPropertyName("last_message_time")]
+    [ObservableProperty]
     private DateTime? _lastMessageTime;
+    
+    [property: JsonPropertyName("last_message_user")]
+    [ObservableProperty]
     private long _lastMessageUser;
+    
+    [property: JsonPropertyName("user1_id")]
+    [ObservableProperty]
     private long _user1;
+    
+    [property: JsonPropertyName("user2_id")]
+    [ObservableProperty]
     private long _user2;
+    
+    [property: JsonIgnore]
+    [ObservableProperty]
     private string _title = string.Empty;
+    
+    [property: JsonIgnore]
+    [ObservableProperty]
     private string _avatarUrl = string.Empty;
+    
+    [property: JsonPropertyName("is_read")]
+    [ObservableProperty]
     private bool? _isRead;
-    
-    [JsonPropertyName("id")]
-    public long Id {
-        get => _id;
-        set => SetField(ref _id, value);
-    }
-    
-    [JsonPropertyName("last_message")]
-    public string LastMessage {
-        get => _lastMessage ;
-        set => SetField(ref _lastMessage, value);
-    }
-    
-    [JsonPropertyName("last_message_time")]
-    public DateTime? LastMessageTime {
-        get =>  _lastMessageTime;
-        set => SetField(ref _lastMessageTime, value);
-    }
-    
-    [JsonPropertyName("last_message_user")]
-    public long LastMessageUser {
-        get => _lastMessageUser;
-        set => SetField(ref _lastMessageUser, value);
-    }
-    
-    [JsonPropertyName("user1_id")]
-    public long User1 {
-        get => _user1;
-        set => SetField(ref _user1, value);
-    }
-    
-    [JsonPropertyName("user2_id")]
-    public long User2 {
-        get => _user2;
-        set => SetField(ref _user2, value);
-    }
-    
-    [JsonIgnore]
-    public string Title {
-        get => _title;
-        set => SetField(ref _title, value);
-    }
-    
-    [JsonIgnore]
-    public string AvatarUrl {
-        get => _avatarUrl;
-        set => SetField(ref _avatarUrl, value);
-    }
-    
-    [JsonPropertyName("is_read")]
-    public bool? IsRead {
-        get => _isRead ?? false;
-        set => SetField(ref _isRead, value);
-    }
-    
-    public event PropertyChangedEventHandler? PropertyChanged;
-
-    protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
-    {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
-
-    protected bool SetField<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
-    {
-        if (EqualityComparer<T>.Default.Equals(field, value)) return false;
-        field = value;
-        OnPropertyChanged(propertyName);
-        return true;
-    }
 }

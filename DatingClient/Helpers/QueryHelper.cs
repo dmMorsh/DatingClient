@@ -17,41 +17,28 @@ public static class QueryHelper
             if (value is null)
                 continue;
 
-            // search for backing field to get attributes
-            var field = typeof(T).GetField($"_{char.ToLowerInvariant(prop.Name[0])}{prop.Name.Substring(1)}",
-                BindingFlags.NonPublic | BindingFlags.Instance);
+            if (prop.GetCustomAttribute<JsonIgnoreAttribute>() is not null)
+                continue;
 
-            var jsonAttr = prop.GetCustomAttribute<JsonPropertyNameAttribute>()
-                           ?? field?.GetCustomAttribute<JsonPropertyNameAttribute>();
-
-            if (jsonAttr is null)
-            {
-                if (field?.GetCustomAttribute<JsonIgnoreAttribute>() is not null) continue;
-            };
+            var jsonAttr = prop.GetCustomAttribute<JsonPropertyNameAttribute>();
+            
             var key = jsonAttr?.Name ?? prop.Name;
             
-            // get converter if any
-            var converterAttr = prop.GetCustomAttribute<JsonConverterAttribute>()
-                                ?? field?.GetCustomAttribute<JsonConverterAttribute>();
-            
+            var converterAttr = prop.GetCustomAttribute<JsonConverterAttribute>();
             if (converterAttr != null)
             {
                 var converter = (JsonConverter)Activator.CreateInstance(converterAttr.ConverterType)!;
-
                 var json = JsonSerializer.Serialize(value, value.GetType(), new JsonSerializerOptions
                 {
                     Converters = { converter }
                 });
-
                 dict[key] = json.Trim('"');
             }
             else
             {
                 dict[key] = value.ToString();
             }
-            
         }
-
         return dict;
     }
     
