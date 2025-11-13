@@ -1,6 +1,6 @@
 # DatingClient
 
-Кроссплатформенное мобильное приложение для знакомств, разработанное на базе **MAUI (.NET 8.0)** с поддержкой iOS, Android, Windows и macOS.
+Кроссплатформенное мобильное приложение для знакомств, разработанное на базе **MAUI (.NET 8.0)** с поддержкой iOS, Android.
 
 ## 📋 Содержание
 
@@ -16,7 +16,7 @@
 - [ViewModel паттерн](#viewmodel-паттерн-и-привязка-данных)
 - [Потоки данных](#поток-данных-и-синхронизация)
 - [Рекомендации](#рекомендации-по-оптимизации)
-- [Справка разработчика](#справка-разработчика)
+- [Build и развертывание](#Build-и-развертывание)
 
 **📚 Дополнительно:** см. [`README_EXTENDED.md`](README_EXTENDED.md) для подробных примеров кода и решения проблем
 
@@ -49,10 +49,8 @@
 
 - 🤖 **Android** 21.0+
 - 🍎 **iOS** 11.0+
-- 🖥️ **Windows** 10.0.17763.0+
-- 💻 **macOS Catalyst** 13.1+
-- (🔳 **Tizen** 6.5+ - опционально)
 
+#архитектура
 ## 🏗 Архитектура
 
 Проект использует паттерн **MVVM (Model-View-ViewModel)** с принципами разделения ответственности:
@@ -182,8 +180,6 @@ DatingClient/
 
 - **Android:** API Level 21 (5.0 Lollipop)
 - **iOS:** версия 11.0 и выше
-- **Windows:** Windows 10 версия 1809+
-- **macOS:** 10.15+
 
 ## ⚙️ Установка и настройка
 
@@ -219,7 +215,6 @@ dotnet build
 # Или для конкретной платформы
 dotnet build -f net8.0-android
 dotnet build -f net8.0-ios
-dotnet build -f net8.0-windows10.0.19041.0
 ```
 
 ### 5. Запуск приложения
@@ -230,9 +225,6 @@ dotnet build -t Run -f net8.0-android
 
 # iOS (требуется macOS)
 dotnet build -t Run -f net8.0-ios
-
-# Windows
-dotnet build -t Run -f net8.0-windows10.0.19041.0
 ```
 
 ## 🔧 Конфигурация
@@ -1076,7 +1068,7 @@ public partial class SearchViewModel : ObservableObject
    - Проблема: `.GetAwaiter().GetResult()` в конструкторе замораживает UI
    - Решение: загружать данные в `IAsyncRelayCommand` вместо конструктора
 
-## � Поток данных и синхронизация
+## Поток данных и синхронизация
 
 ### Карусель профилей (SearchViewModel)
 
@@ -1269,94 +1261,6 @@ CacheService.GetOrFetchUserProfileAsync(userId)
 
 ---
 
-## �📝 Справка разработчика
-
-### Добавление новой страницы
-
-1. **Создать XAML страницу** в `Views/`
-
-```xaml
-<?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="DatingClient.Views.NewPage"
-             Title="New Page">
-    <!-- Содержимое -->
-</ContentPage>
-```
-
-2. **Создать ViewModel** в `ViewModels/`
-
-```csharp
-using CommunityToolkit.Mvvm.ComponentModel;
-
-namespace DatingClient.ViewModels;
-
-public partial class NewViewModel : ObservableObject
-{
-    [ObservableProperty]
-    private string title = "New Page";
-}
-```
-
-3. **Регистрировать в MauiProgram.cs**
-
-```csharp
-builder.Services.AddTransient<NewViewModel>();
-builder.Services.AddTransient<NewPage>();
-```
-
-4. **Добавить маршрут в AppShell.xaml**
-
-```xaml
-<ShellContent Title="New" Route="new" ContentTemplate="{DataTemplate views:NewPage}" />
-```
-
-### Работа с API
-
-```csharp
-public partial class MyViewModel : ObservableObject
-{
-    private readonly ApiService _apiService;
-
-    public MyViewModel(ApiService apiService)
-    {
-        _apiService = apiService;
-    }
-
-    [RelayCommand]
-    public async Task LoadUserAsync(string userId)
-    {
-        try
-        {
-            var user = await _apiService.GetAsync<User>($"/users/{userId}");
-            // Работа с данными
-        }
-        catch (Exception ex)
-        {
-            // Обработка ошибки
-            await Application.Current.MainPage.DisplayAlert("Ошибка", ex.Message, "OK");
-        }
-    }
-}
-```
-
-### Использование WebSocket
-
-```csharp
-[RelayCommand]
-public async Task SendMessageAsync(string content)
-{
-    var wsMessage = new WSMessage
-    {
-        Type = "message",
-        Content = content
-    };
-
-    await _socketService.SendMessageAsync(wsMessage);
-}
-```
-
 ## 🚀 Build и развертывание
 
 ### Для Android
@@ -1376,12 +1280,6 @@ dotnet publish -f net8.0-android -c Release
 ```bash
 # Требуется macOS
 dotnet publish -f net8.0-ios -c Release
-```
-
-### Для Windows
-
-```bash
-dotnet publish -f net8.0-windows10.0.19041.0 -c Release
 ```
 
 ## 🐛 Решение проблем
@@ -1409,21 +1307,6 @@ dotnet publish -f net8.0-windows10.0.19041.0 -c Release
 - Закройте все остальные соединения к БД
 - Перезагрузите приложение
 - Проверьте права доступа к файлу БД
-
-## 📄 Лицензия
-
-Проект защищен лицензией, указанной в корневой директории репозитория.
-
-## 👨‍💼 Автор
-
-**dmMorsh** — разработчик проекта
-
-## 📞 Контакты и поддержка
-
-Для вопросов, предложений и помощи:
-
-- Откройте [Issue](https://github.com/dmMorsh/DatingClient/issues) на GitHub
-- Создайте [Pull Request](https://github.com/dmMorsh/DatingClient/pulls) с вашими улучшениями
 
 ---
 
