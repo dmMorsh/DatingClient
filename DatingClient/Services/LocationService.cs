@@ -59,7 +59,7 @@ public class LocationService
 
         try
         {
-            _http.DefaultRequestHeaders.UserAgent.ParseAdd("DatingApp/1.0 (your@email.com)");
+            _http.DefaultRequestHeaders.UserAgent.ParseAdd("DatingApp/1.0 (admin@email.com)");
             _http.DefaultRequestHeaders.AcceptLanguage.ParseAdd("ru-RU,ru;q=0.9,en;q=0.8");
 
             var encoded = HttpUtility.UrlEncode(LocationQuery);
@@ -74,7 +74,7 @@ public class LocationService
                 {
                     Suggestions.Add(new LocationSuggestion
                     {
-                        DisplayName = item["display_name"]?.ToString(),
+                        DisplayName = item["display_name"]?.ToString() ?? "Unknown",
                         Name = item["name"]?.ToString(),
                         Latitude = double.Parse(item["lat"]?.ToString() ?? "0", System.Globalization.CultureInfo.InvariantCulture),
                         Longitude = double.Parse(item["lon"]?.ToString() ?? "0", System.Globalization.CultureInfo.InvariantCulture)

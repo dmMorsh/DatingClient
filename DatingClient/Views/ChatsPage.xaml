@@ -19,7 +19,7 @@
                               ColumnDefinitions="60,*,Auto"
                               RowDefinitions="Auto,Auto">
 
-                            <!-- КРУГЛЫЙ АВАТАР -->
+                            <!-- Avatar -->
                             <Frame WidthRequest="50"
                                    HeightRequest="50"
                                    CornerRadius="25"
@@ -33,7 +33,7 @@
                                        HeightRequest="50" />
                             </Frame>
 
-                            <!-- ИМЯ И ПОСЛЕДНЕЕ СООБЩЕНИЕ -->
+                            <!-- Name & last msg -->
                             <VerticalStackLayout Grid.Column="1"
                                                  Padding="10,0"
                                                  VerticalOptions="Center">
@@ -47,7 +47,7 @@
                                        LineBreakMode="TailTruncation" />
                             </VerticalStackLayout>
 
-                            <!-- ВРЕМЯ + КРАСНАЯ ТОЧКА -->
+                            <!-- Iime + indicator -->
                             <Grid Grid.Column="2"
                                   VerticalOptions="Center"
                                   HorizontalOptions="End">
@@ -64,7 +64,7 @@
                                          IsVisible="{Binding IsRead , Converter={StaticResource InverseBoolConverter}}" />
                             </Grid>
 
-                            <!-- НЕВИДИМАЯ КНОПКА -->
+                            <!-- Transparent button -->
                             <Button Grid.ColumnSpan="3"
                                     BackgroundColor="Transparent"
                                     Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ChatsViewModel}}, Path=OpenChatCommand}"
@@ -75,7 +75,7 @@
             </CollectionView>
         </RefreshView>
         
-        <!-- Заставка загрузки -->
+        <!-- Loading splash screen -->
         <views:LoadingOverlay IsLoading="{Binding IsLoading}" />
     </Grid>
 

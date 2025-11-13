@@ -12,7 +12,6 @@ public partial class LoginViewModel : ObservableObject
     private readonly SocketService _socketService;
     
     public Command LoginCommand { get; }
-    // public Command RegisterCommand { get; }
     
     [ObservableProperty] private string _statusLabel = Empty;
     [ObservableProperty] private string _usernameEntry = Empty;
@@ -24,8 +23,6 @@ public partial class LoginViewModel : ObservableObject
         _api = api;
         _socketService = socketService;
         LoginCommand = new Command(async void () => await Login());
-        // RegisterCommand = new Command(async void () => await Application.Current.MainPage
-        //     .DisplayAlert("Register", "Not implemented yet", "OK"));
     }
     
     private async Task Login()

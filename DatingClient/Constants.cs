@@ -3,7 +3,6 @@
 public static class Constants
 {
     public const string ApiBaseUrl = "http://192.168.0.12:8088";
-    // public const string ApiBaseUrl = "https://1mxx5zd9-8088.uks1.devtunnels.ms";
     // public const string ApiBaseUrl = "https://intellyjourney.ru"; //🛰️ 📡 
     public const string UserId = "user_id";
     public const string AccessToken = "access_token";

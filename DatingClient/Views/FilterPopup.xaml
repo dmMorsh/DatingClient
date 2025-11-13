@@ -7,7 +7,6 @@
                x:Class="DatingClient.Views.FilterPopup"
                Size="480,640"
                Closed="FilterPopup_OnClosed">
-    <!-- <toolkit:Popup./> -->
     <toolkit:Popup.Resources>
         <converters:GenderToStringConverter x:Key="GenderToStringConverter" />
     </toolkit:Popup.Resources>

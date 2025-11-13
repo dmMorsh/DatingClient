@@ -1,7 +1,6 @@
 ﻿<?xml version = "1.0" encoding = "UTF-8" ?>
 <Application xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:local="clr-namespace:DatingClient"
              xmlns:converters="clr-namespace:DatingClient.Converters"
              x:Class="DatingClient.App">
     <Application.Resources>
@@ -11,7 +10,7 @@
                 <ResourceDictionary Source="Resources/Styles/Styles.xaml" />
             </ResourceDictionary.MergedDictionaries>
             
-            <!-- Конвертеры -->
+            <!-- Converters -->
             <converters:InverseBoolConverter x:Key="InverseBoolConverter" />
             <converters:BoolToColorConverter x:Key="BoolToColorConverter"
                                              MyMessageColor="#4C6EF5"
@@ -19,10 +18,7 @@
             <converters:BoolToLayoutConverter x:Key="BoolToLayoutConverter" />
             <converters:NullableToBoolConverter x:Key="NullableToBoolConverter" />
             
-            <!-- <Color x:Key="PrimaryColor">#4C6EF5</Color> -->
-            <!-- <Color x:Key="SecondaryColor">#F8F9FB</Color> -->
-            
-            <!-- ✅ Стили -->
+            <!-- Styles -->
             <Style TargetType="ContentPage">
                 <Setter Property="BackgroundColor" Value="{StaticResource Gray200}" />
                 <Setter Property="Background" Value="{StaticResource Gray200}" />

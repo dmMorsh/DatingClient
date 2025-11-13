@@ -14,7 +14,6 @@ public class ChatSummary : INotifyPropertyChanged
     private long _user2;
     private string _title = string.Empty;
     private string _avatarUrl = string.Empty;
-    // private bool _unreaded;
     private bool? _isRead;
     
     [JsonPropertyName("id")]

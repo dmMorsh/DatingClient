@@ -7,12 +7,12 @@ namespace DatingClient.ViewModels;
 
 public partial class SettingsViewModel : ObservableObject
 {
-//     public bool IsDebug =>
-// #if DEBUG
-//         true;
-// #else
-//     false;
-// #endif
+    public bool IsDebug =>
+#if DEBUG
+        true;
+#else
+    false;
+#endif
 
     private readonly ApiService _api;
     private readonly SocketService _socketService;
@@ -46,12 +46,6 @@ public partial class SettingsViewModel : ObservableObject
     {
         AuthHelper.Logout(_api, _socketService, _userCache);
         return Task.CompletedTask;
-// #if ANDROID
-//         Android.OS.Process.KillProcess(Android.OS.Process.MyPid());
-// #elif WINDOWS
-//         Application.Current.Quit();
-// #endif
-//         throw new NotImplementedException();
     }
 
     [RelayCommand]

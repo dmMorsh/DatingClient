@@ -23,7 +23,6 @@
                 <Label x:Name="StatusLabel" TextColor="Red" />
             </VerticalStackLayout>
             
-            <!-- Заставка загрузки -->
             <views:LoadingOverlay IsLoading="{Binding IsLoading}" />
         </Grid>
     </ContentPage.Content>

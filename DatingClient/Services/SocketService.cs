@@ -45,7 +45,7 @@ public class SocketService
             if (result.MessageType == WebSocketMessageType.Close)
                 break;
             
-            var json = String.Empty;
+            var json = string.Empty;
             try
             {
                 json = Encoding.UTF8.GetString(buffer, 0, result.Count);

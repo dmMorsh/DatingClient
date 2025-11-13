@@ -120,9 +120,8 @@ public partial class SearchViewModel : ObservableObject
     private void MoveNext()
     {
         if (!_deque.MoveNext())
-            LoadUsersAsync(); // если дошли до конца — подкачиваем
+            LoadUsersAsync(); // if we are at the end, try to load more
 
-        // если осталось меньше 5 — заранее подкачиваем
         if (_deque.RemainingAhead < 5 && !_isLoading)
             LoadUsersAsync();
 

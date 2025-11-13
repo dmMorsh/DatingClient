@@ -12,7 +12,6 @@ public partial class FilterPopup : Popup
         BindingContext = vm;
     }
     
-    // Метод для закрытия popup
     public void Close(object? sender, EventArgs e)
     {
         Close();

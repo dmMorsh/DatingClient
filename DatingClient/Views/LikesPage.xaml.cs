@@ -20,7 +20,7 @@ public partial class LikesPage : ContentPage
         frame.Opacity = 0;
         frame.TranslationY = 40;
 
-        // простая анимация появления
+        // appear animation
         await Task.WhenAll(
             frame.FadeTo(1, 250, Easing.CubicOut),
             frame.TranslateTo(0, 0, 250, Easing.CubicOut)
@@ -35,19 +35,5 @@ public partial class LikesPage : ContentPage
             var popup = new ProfilePopup(user, vm.LikeBackCommand, vm.DislikeCommand);
             await this.ShowPopupAsync(popup);
         }
-        // if (sender is not Grid grid) return;
-        // var heart = grid.FindByName<Label>("LikeEffect");
-        // if (heart is null) return;
-        //
-        // heart.Opacity = 0;
-        // heart.Scale = 0.5;
-        //
-        // await Task.WhenAll(
-        //     heart.FadeTo(1, 150, Easing.CubicOut),
-        //     heart.ScaleTo(1.2, 150, Easing.CubicOut)
-        // );
-        //
-        // await Task.Delay(300);
-        // await heart.FadeTo(0, 200);
     }
 }

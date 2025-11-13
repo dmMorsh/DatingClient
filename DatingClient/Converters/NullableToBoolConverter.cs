@@ -10,7 +10,6 @@ public class NullableToBoolConverter: IValueConverter
         bool result;
 
         if (value is IEnumerable enumerable)
-            // Проверяем, есть ли элементы в коллекции
             result = enumerable.Cast<object>().Any();
         else
             result = value is not null;

@@ -11,7 +11,6 @@
     <!-- </ContentPage.BindingContext> -->
     
     <Grid>
-        <!-- RefreshView обеспечивает pull-to-refresh -->
         <RefreshView Command="{Binding RefreshCommand}"
                      IsRefreshing="{Binding IsRefreshing}">
             
@@ -107,7 +106,6 @@
             
         </RefreshView>    
         
-        <!-- Заставка загрузки -->
         <views:LoadingOverlay IsLoading="{Binding IsLoading}" />
     </Grid>
         

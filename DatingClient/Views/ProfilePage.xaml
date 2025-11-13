@@ -18,7 +18,7 @@
     <Grid>
         <ScrollView>
             <VerticalStackLayout Padding="20" Spacing="16">
-                <!-- Поля -->
+                <!-- Fields -->
                 <Frame WidthRequest="250"
                        HeightRequest="250"
                        CornerRadius="125"
@@ -87,7 +87,6 @@
 
                 <ActivityIndicator IsRunning="{Binding IsDetecting}" IsVisible="{Binding IsDetecting}" />
 
-                <!-- Сохранить -->
                 <Button Text="Сохранить"
                         Command="{Binding SaveProfileCommand}"
                         IsVisible="{Binding IsEditing}" />
@@ -98,7 +97,7 @@
 
         </ScrollView>
 
-        <!-- Редактировать -->
+        <!-- Edit -->
         <Grid VerticalOptions="Start" ColumnDefinitions="*,*,*,*">
             <Button Text="⚙️" FontSize="24" BackgroundColor="Transparent" Grid.Column="3"
                     Command="{Binding EditProfileCommand}" />

@@ -24,22 +24,20 @@ public partial class App : Application
     {
         api.AccessToken = AuthHelper.GetAccessToken();
 
-        // Проверяем токен при запуске
         if (!string.IsNullOrEmpty(api.AccessToken))
         {
             api.UserId = Convert.ToInt32(AuthHelper.GetUserId());
             api.RefreshToken = AuthHelper.GetRefreshToken();
             
-            MainPage = new AppShell(); // пользователь уже вошёл
+            MainPage = new AppShell(); // user already logged in
             _ = socketService.ConnectAsync();
         }
         else
         {
-            MainPage = new NavigationPage(new LoginPage(new LoginViewModel(api, socketService))); // страница входа
+            MainPage = new NavigationPage(new LoginPage(new LoginViewModel(api, socketService)));
         }
     }
 
-    // Метод для смены страницы после логина/логаута
     public static void SetMainPage(Page page)
     {
         if (Current is not null) Current.MainPage = page;

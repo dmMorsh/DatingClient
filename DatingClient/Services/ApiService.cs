@@ -70,7 +70,7 @@ public class ApiService
         return await response.Content.ReadFromJsonAsync<T>();
     }
     
-    private async Task<HttpResponseMessage?> SendWithRetry(Func<Task<HttpResponseMessage>> action)
+    private async Task<HttpResponseMessage> SendWithRetry(Func<Task<HttpResponseMessage>> action)
     {
         AddAuthHeader();
         try
@@ -82,16 +82,16 @@ public class ApiService
                 if (refreshed)
                 {
                     AddAuthHeader();
-                    response = await action(); // повторяем запрос
+                    response = await action(); // retry once
                 }
             }
 
             return response;
         }
-        catch (Exception e)
+        catch
         {
             await Shell.Current.DisplayAlert("Error", "Failed to connect", "Ok");
-            return null;
+            return new HttpResponseMessage(HttpStatusCode.ServiceUnavailable);
         }
 
     }
@@ -102,7 +102,7 @@ public class ApiService
 
         //TODO fix out
         if (response.StatusCode == HttpStatusCode.Unauthorized)
-            Shell.Current.DisplayAlert("Error", "Failed to refresh, login again please", "Ok");
+            await Shell.Current.DisplayAlert("Error", "Failed to refresh, login again please", "Ok");
 
         if (!response.IsSuccessStatusCode)
             return false;
@@ -117,7 +117,7 @@ public class ApiService
         
         await SecureStorage.SetAsync(Constants.AccessToken, AccessToken);
 
-        // Обновляем заголовки для будущих запросов
+        // reapply header
         AddAuthHeader();
 
         return true;

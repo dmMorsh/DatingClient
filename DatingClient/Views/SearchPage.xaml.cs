@@ -7,7 +7,7 @@ namespace DatingClient.Views;
 public partial class SearchPage : ContentPage
 {
     private double _x;
-    private const double SwipeThreshold = 120; // порог свайпа
+    private const double SwipeThreshold = 120;
     
     public SearchPage(SearchViewModel vm)
     {
@@ -26,7 +26,7 @@ public partial class SearchPage : ContentPage
             case GestureStatus.Running:
                 CardFrame.TranslationX = _x + e.TotalX;
                 CardFrame.TranslationY = 0;
-                CardFrame.Rotation = e.TotalX / 20; // лёгкий поворот
+                CardFrame.Rotation = e.TotalX / 20;
                 
                 LikeLabel.Opacity = Math.Max(0, e.TotalX / 100);
                 NopeLabel.Opacity = Math.Max(0, -e.TotalX / 100);
@@ -48,13 +48,13 @@ public partial class SearchPage : ContentPage
             var toRight = totalX > 0;
             var targetX = totalX > 0 ? 1000 : -1000;
 
-            // Анимация ухода карточки
+            // card off-screen with fade-out
             await Task.WhenAll(
                 CardFrame.TranslateTo(targetX, 0, 250, Easing.SinIn),
                 CardFrame.FadeTo(0, 250)
             );
 
-            // Обработка свайпа
+            // handle like or skip
             if (toRight)
                 await vm.LikeCommand.ExecuteAsync(null);
             else
@@ -63,12 +63,12 @@ public partial class SearchPage : ContentPage
             Task.Delay(20).Wait();
             
             await HideLabels();
-            // 4️⃣ Мгновенно сбросить позицию за экраном
-            CardFrame.TranslationX = 0;// -targetX / 3;
+            // immediately reset position off-screen at top
+            CardFrame.TranslationX = 0;
             CardFrame.TranslationY = -400;//300 ok too
             CardFrame.Rotation = 0;
 
-            // 5️⃣ Вернуть карточку с fade-in
+            // bring card back on-screen with fade-in
             await Task.WhenAll(
                 CardFrame.TranslateTo(0, 0, 250, Easing.SinOut),
                 CardFrame.FadeTo(1, 200)
@@ -77,7 +77,7 @@ public partial class SearchPage : ContentPage
         }
         else
         {
-            // Возврат на место
+            // return to center
             await Task.WhenAll(
                 CardFrame.TranslateTo(0, 0, 150, Easing.SpringOut),
                 CardFrame.RotateTo(0, 150), HideLabels()
@@ -129,12 +129,12 @@ public partial class SearchPage : ContentPage
         {
             vm.UndoCommand.Execute(null);
             
-            // 4️⃣ Мгновенно сбросить позицию за экраном
+            // immediately move card off-screen at top
             CardFrame.TranslationX = 0;
             CardFrame.TranslationY = -800;
             CardFrame.Rotation = 0;
             Task.Delay(150).Wait();
-            // Возврат на место
+            // bring card back on-screen with spring effect
             await Task.WhenAll(
                 CardFrame.TranslateTo(0, 0, 1250, Easing.SpringOut),
                 CardFrame.RotateTo(0, 1250), HideLabels()
