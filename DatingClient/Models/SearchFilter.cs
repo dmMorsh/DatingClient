@@ -1,5 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
+using DatingClient.Attributes;
 using DatingClient.Converters;
 
 namespace DatingClient.Models;
@@ -44,7 +45,8 @@ public partial class SearchFilter : ObservableObject
     [ObservableProperty]
     private bool? _onlineOnly;
 
-    [property: JsonIgnore]
+    [property: QueryIgnore]
+    [property: JsonPropertyName("location")]
     [ObservableProperty] 
     private string? _location;
 }

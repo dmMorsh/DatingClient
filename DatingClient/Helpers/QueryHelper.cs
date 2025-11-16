@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using DatingClient.Attributes;
 
 namespace DatingClient.Helpers;
 public static class QueryHelper
@@ -17,7 +18,7 @@ public static class QueryHelper
             if (value is null)
                 continue;
 
-            if (prop.GetCustomAttribute<JsonIgnoreAttribute>() is not null)
+            if (prop.GetCustomAttribute<QueryIgnoreAttribute>() is not null)
                 continue;
 
             var jsonAttr = prop.GetCustomAttribute<JsonPropertyNameAttribute>();
