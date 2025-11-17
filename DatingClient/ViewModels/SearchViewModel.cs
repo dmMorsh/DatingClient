@@ -17,14 +17,15 @@ public partial class SearchViewModel : ObservableObject
     private long? _lastSeenId;
     private bool _isDetecting;
     private bool _settingLq;
-    
-    public string LocationPlaceholder => string.IsNullOrEmpty(LocationQuery) 
+
+    public string LocationPlaceholder => string.IsNullOrEmpty(LocationQuery)
         ? string.IsNullOrEmpty(Filter.Location) ? "Укажи город..." : Filter.Location
         : LocationQuery;
+
     public ObservableCollection<LocationSuggestion> Suggestions => _locationService.Suggestions;
     [ObservableProperty] private string _locationQuery = "";
     [ObservableProperty] private bool _isLocationAutoFilled = true;
-    
+
     [ObservableProperty] private bool _isLoading;
     [ObservableProperty] private SearchFilter _filter;
     private bool _endReached;
@@ -37,29 +38,27 @@ public partial class SearchViewModel : ObservableObject
     {
         _api = api;
         _locationService = locationService;
-        Filter = StorageHelper.LoadSearchFilter();
-        if (Filter is null && _api is not null)
-        {
-            var me = cacheService.GetOrFetchUserAsync(_api.UserId, true).GetAwaiter().GetResult();
-            if (!string.IsNullOrEmpty(me?.Username))
-            {
-                Filter = new SearchFilter // fill default
-                {
-                    InterestedIn = me.Gender,
-                    Gender = me.InterestedIn,
-                    MinAge = me.Age - 1,
-                    MaxAge = me.Age + 1,
-                    Latitude = me.Latitude,
-                    Longitude = me.Longitude,
-                    Location = me.Location,
-                    MaxDistanceKm = 10,
-                };
-                StorageHelper.SaveSearchFilter(Filter);
-            }
-        }
-
+        Filter = StorageHelper.LoadSearchFilter() ?? FillFilterFromUser(cacheService).Result;
         OnPropertyChanged(nameof(Filter));
         LoadUsersAsync();
+    }
+
+    private async Task<SearchFilter> FillFilterFromUser(CacheService cacheService)
+    {
+        var filter = new SearchFilter();
+        var me = await cacheService.GetOrFetchUserAsync(_api.UserId, true);
+        if (string.IsNullOrEmpty(me?.Username)) return filter;
+        // fill default
+        filter.InterestedIn = me.Gender;
+        filter.Gender = me.InterestedIn;
+        filter.MinAge = me.Age - 1;
+        filter.MaxAge = me.Age + 1;
+        filter.Latitude = me.Latitude;
+        filter.Longitude = me.Longitude;
+        filter.Location = me.Location;
+        filter.MaxDistanceKm = 10;
+        StorageHelper.SaveSearchFilter(filter);
+        return filter;
     }
 
     private async void LoadUsersAsync()
@@ -142,7 +141,7 @@ public partial class SearchViewModel : ObservableObject
         LoadUsersAsync();
         OnPropertyChanged(nameof(HasPrevious));
     }
-    
+
     [RelayCommand]
     private async Task DetectLocationAsync()
     {
@@ -152,7 +151,7 @@ public partial class SearchViewModel : ObservableObject
         {
             _isDetecting = true;
             var location = await _locationService.DetectLocationAsync();
-            
+
             if (location is not null)
             {
                 var placemarks = await Geocoding.GetPlacemarksAsync(location);
@@ -172,35 +171,38 @@ public partial class SearchViewModel : ObservableObject
         }
         catch (Exception ex)
         {
-            await Shell.Current.DisplayAlert("Ошибка", "Не удалось определить местоположение. Разрешите доступ к GPS.", "Ок");
+            await Shell.Current.DisplayAlert("Ошибка", "Не удалось определить местоположение. Разрешите доступ к GPS.",
+                "Ок");
         }
         finally
         {
             _isDetecting = false;
         }
     }
-    
+
     partial void OnLocationQueryChanged(string value)
     {
-        if(_settingLq)
+        if (_settingLq)
         {
             IsLocationAutoFilled = true;
             OnPropertyChanged(nameof(LocationPlaceholder));
             return;
-        };
+        }
+
+        ;
         _locationService.LocationQuery = value;
     }
-    
+
     [RelayCommand]
     private async Task SelectSuggestionAsync(LocationSuggestion? suggestion)
     {
         if (suggestion is null) return;
-        
+
         Filter.Latitude = suggestion.Latitude;
         Filter.Longitude = suggestion.Longitude;
         LocationQuery = String.Empty;
-        
-        var loc = new Location(Filter.Latitude ?? 0, Filter.Longitude ?? 0,new DateTimeOffset(DateTime.Now));
+
+        var loc = new Location(Filter.Latitude ?? 0, Filter.Longitude ?? 0, new DateTimeOffset(DateTime.Now));
         var placemarks = await Geocoding.GetPlacemarksAsync(loc);
         var placemark = placemarks?.FirstOrDefault();
         if (placemark?.Locality is not null) Filter.Location = placemark.Locality;
